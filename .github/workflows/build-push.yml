@@ -1,0 +1,31 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Login to Docker Hub
+        env:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+        run: echo $password | docker login $registry --username $username --password-stdin
+      -
+        name: Build and push
+        run: |
+          docker build -t "stephenwolfe/terraformer:$GITHUB_SHA" .
+          docker push "stephenwolfe/terraformer:$GITHUB_SHA"
+      -
+        name: Build and push develop
+        if: github.ref == 'refs/heads/develop'
+        run: |
+          docker tag "stephenwolfe/terraformer:$GITHUB_SHA" "stephenwolfe/terraformer:latest"
+          docker push "stephenwolfe/terraformer:latest"
