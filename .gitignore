@@ -1,0 +1,11 @@
+.DS_Store
+.kube
+.helm
+jedi-kube
+_dist/
+bin/
+vendor/
+**/.terraform
+**/.terraform.tfstate
+**/.terraform.lock.hcl
+/providers.tf
