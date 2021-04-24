@@ -18,9 +18,9 @@ var insecure = false
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "terraformer",
-	Short: "Kubernetes deployment CLI tool",
-	Long: `This application provides functionality for rendering kubernetes
-templates, running validation and diffcheck, and deploying via kubectl or helm`,
+	Short: "Terraform cli wrapper",
+	Long: `This application provides functionality for running Terraform cli
+consistently in a CI/CD environment`,
 	PersistentPreRunE: preFlight,
 }
 
