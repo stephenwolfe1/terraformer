@@ -22,7 +22,8 @@ func init() {
 }
 
 func runInit(*cobra.Command, []string) {
-	args := append([]string{"-chdir="+viper.GetString("directory"), "init", "-get=true", "-reconfigure"}, defaultOptions...)
+	args := append([]string{"-chdir="+viper.GetString("directory"), "init", "-upgrade", "-get=true", "-plugin-dir=/providers/plugins", "-reconfigure"}, defaultOptions...)
+
 	if viper.GetString("global-options") != "" {
 		args = append([]string{viper.GetString("global-options")}, args...)
 	}
