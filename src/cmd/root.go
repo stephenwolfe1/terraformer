@@ -59,6 +59,8 @@ func init() {
 	rootCmd.PersistentFlags().StringP("options", "o", "", "Set terraform command options")
 	rootCmd.PersistentFlags().StringP("directory", "d", "", "Set terraform command directory")
 	rootCmd.PersistentFlags().StringP("data-directory", "w", ".terraform", "Set terraform command directory")
+	rootCmd.PersistentFlags().StringP("vault-addr", "a", "", "Set the vault address")
+	rootCmd.PersistentFlags().StringP("vault-token", "t", "", "Set the vault token")
 	rootCmd.PersistentFlags().StringP("verbosity", "v", log.InfoLevel.String(), "Log level (debug, info, warn, error, fatal, panic")
 
 	// bind flags
@@ -66,6 +68,8 @@ func init() {
 	viper.BindPFlag("options", rootCmd.PersistentFlags().Lookup("options"))
 	viper.BindPFlag("directory", rootCmd.PersistentFlags().Lookup("directory"))
 	viper.BindPFlag("data-directory", rootCmd.PersistentFlags().Lookup("data-directory"))
+	viper.BindPFlag("vault-addr", rootCmd.PersistentFlags().Lookup("vault-addr"))
+	viper.BindPFlag("vault-token", rootCmd.PersistentFlags().Lookup("vault-token"))
 	viper.BindPFlag("verbosity", rootCmd.PersistentFlags().Lookup("verbosity"))
 
 	// bind to missnamed environment variabels and alias
@@ -73,6 +77,8 @@ func init() {
 	viper.BindEnv("options", "OPTIONS")
 	viper.BindEnv("directory", "DIRECTORY")
 	viper.BindEnv("data-directory", "TF_DATA_DIR")
+	viper.BindEnv("vault-addr", "VAULT_ADDR")
+	viper.BindEnv("vault-token", "VAULT_TOKEN")
 
 	//support .vault-token file
 	if viper.GetString("vault-token") == "" {
