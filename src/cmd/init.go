@@ -13,8 +13,8 @@ import (
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Inits terraform code",
-	Long: `Runs terraform init.`,
-	Run: runInit,
+	Long:  `Runs terraform init.`,
+	Run:   runInit,
 }
 
 func init() {
@@ -22,7 +22,7 @@ func init() {
 }
 
 func runInit(*cobra.Command, []string) {
-	args := append([]string{"-chdir="+viper.GetString("directory"), "init", "-upgrade", "-get=true", "-plugin-dir=/providers/plugins", "-reconfigure"}, defaultOptions...)
+	args := append([]string{"-chdir=" + viper.GetString("directory"), "init", "-upgrade", "-get=true", "-plugin-dir=/providers", "-reconfigure"}, defaultOptions...)
 
 	if viper.GetString("global-options") != "" {
 		args = append([]string{viper.GetString("global-options")}, args...)
