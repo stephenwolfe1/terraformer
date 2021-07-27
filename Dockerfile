@@ -1,16 +1,13 @@
 FROM golang:1.16-alpine AS builder
 
-ENV TERRAFORM_VER v0.15.0
+ENV TERRAFORM_VERSION=1.0.3
 
-RUN apk add --no-cache git && \
-  git clone -c advice.detachedHead=false https://github.com/hashicorp/terraform.git -b ${TERRAFORM_VER}
+RUN wget -O - "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" | unzip - \
+  && chmod +x terraform
 
-RUN cd terraform/tools/terraform-bundle && \
-  go install .
+COPY examples/services/main/versions.tf .
 
-COPY terraform-bundle.hcl .
-
-RUN terraform-bundle package -os=linux -arch=amd64 terraform-bundle.hcl
+RUN ./terraform providers mirror /providers
 
 WORKDIR /terraformer
 
@@ -23,16 +20,14 @@ COPY . .
 
 RUN go build -o ./out/terraformer src/main.go
 
+
 FROM alpine:3.13 AS app
 RUN apk add ca-certificates
 
-COPY --from=builder /go/terraform_*.zip /tmp/
+COPY .terraformrc /root/.terraformrc
 
-RUN mkdir -p /providers/ && \
-  unzip -d /providers /tmp/terraform_*.zip && \
-  mv /providers/terraform /bin/terraform && \
-  rm /tmp/terraform_*.zip
-
+COPY --from=builder /go/terraform /usr/local/bin/terraform
+COPY --from=builder /providers /providers
 COPY --from=builder /terraformer/out/terraformer /usr/local/bin/terraformer
 
 ENTRYPOINT ["terraformer"]
