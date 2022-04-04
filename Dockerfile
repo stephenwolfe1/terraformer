@@ -1,6 +1,6 @@
 FROM golang:1.16-alpine AS builder
 
-ENV TERRAFORM_VERSION=1.0.3
+ENV TERRAFORM_VERSION=1.1.7
 
 RUN wget -O - "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" | unzip - \
   && chmod +x terraform
