@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var defaultOptions = []string {}
+var defaultOptions = []string{}
 var insecure = false
 
 // rootCmd represents the base command when called without any subcommands
@@ -40,7 +40,7 @@ func preFlight(cmd *cobra.Command, args []string) error {
 	}
 
 	//print debug env info
-	log.Debug(fmt.Sprintf("Env Vars: \n\tglobal-options: %s\n\toptions: %s\n\tdirectory: %s\n\tverbosity: %s\n",
+	log.Debug(fmt.Sprintf("Env Vars: \n\tglobal-options: %s\n\toptions: %s\n\tdirectory: %s\n\tworking-directory: %s\n\tverbosity: %s\n",
 		viper.GetString("global-options"),
 		viper.GetString("options"),
 		viper.GetString("directory"),
