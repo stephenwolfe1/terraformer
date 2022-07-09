@@ -1,6 +1,6 @@
-FROM golang:1.16-alpine AS builder
+FROM golang:1.18.3-alpine3.16 AS builder
 
-ENV TERRAFORM_VERSION=1.1.7
+ENV TERRAFORM_VERSION=1.2.4
 
 RUN wget -O - "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" | unzip - \
   && chmod +x terraform
@@ -21,7 +21,7 @@ COPY . .
 RUN go build -o ./out/terraformer src/main.go
 
 
-FROM alpine:3.13 AS app
+FROM alpine:3.16 AS app
 RUN apk add ca-certificates
 
 COPY .terraformrc /root/.terraformrc
