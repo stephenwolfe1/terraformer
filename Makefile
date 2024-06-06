@@ -15,10 +15,13 @@ TESTS      :=
 TESTFLAGS  :=
 LDFLAGS    := -w -s
 GOFLAGS    :=
-SRC        := $(shell find . -type f -name '*.go' -print)
+CGO_ENABLED ?= 0
+
+# Rebuild the binary if any of these files change
+SRC        := $(shell find . -type f -name '*.go' -print) go.mod go.sum
 
 # Required for globs to work correctly
-SHELL      = /bin/bash
+SHELL      = /usr/bin/env bash
 
 GIT_COMMIT = $(shell git rev-parse HEAD)
 GIT_SHA    = $(shell git rev-parse --short HEAD)
@@ -32,16 +35,16 @@ BINARY_VERSION ?= ${GIT_TAG}
 
 # Only set Version if building a tag or VERSION is set
 ifneq ($(BINARY_VERSION),)
-	LDFLAGS += -X github.com/ghostgroup/terraformer/src/cmd/terraformer.version=${BINARY_VERSION}
+	LDFLAGS += -X github.com/stephenwolfe1/terraformer/src/cmd/terraformer.version=${BINARY_VERSION}
 endif
 
 # Clear the "unreleased" string in BuildMetadata
 ifneq ($(GIT_TAG),)
-	LDFLAGS += -X github.com/ghostgroup/terraformer/src/cmd/terraformer.metadata=
+	LDFLAGS += -X github.com/stephenwolfe1/terraformer/src/cmd/terraformer.metadata=
 endif
 
-LDFLAGS += -X github.com/ghostgroup/terraformer/src/cmd/terraformer.gitCommit=${GIT_COMMIT}
-LDFLAGS += -X github.com/ghostgroup/terraformer/src/cmd/terraformer.gitTreeState=${GIT_DIRTY}
+LDFLAGS += -X github.com/stephenwolfe1/terraformer/src/cmd/terraformer.gitCommit=${GIT_COMMIT}
+LDFLAGS += -X github.com/stephenwolfe1/terraformer/src/cmd/terraformer.gitTreeState=${GIT_DIRTY}
 
 # ------------------------------------------------------------------------------
 # Docker stuff
@@ -102,7 +105,7 @@ $(GOIMPORTS):
 build-go: $(BINDIR)/$(BINNAME)
 
 $(BINDIR)/$(BINNAME): $(SRC)
-	GO111MODULE=on go build $(GOFLAGS) -tags '$(TAGS)' -ldflags '$(LDFLAGS)' -o $(BINDIR)/$(BINNAME) ./src
+	GO111MODULE=on CGO_ENABLED=$(CGO_ENABLED) go build $(GOFLAGS) -trimpath -tags '$(TAGS)' -ldflags '$(LDFLAGS)' -o '$(BINDIR)'/$(BINNAME) ./src
 
 .PHONY: build-cross
 build-cross: LDFLAGS += -extldflags "-static"
