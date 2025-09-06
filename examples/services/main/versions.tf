@@ -3,47 +3,47 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 3.37"
+      version = "~> 6.0"
     }
 
     google = {
       source  = "hashicorp/google"
-      version = ">= 3.77.0"
+      version = "~> 7.0"
     }
 
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = ">= 2.1.0"
+      version = "~> 2.0"
     }
 
     helm = {
       source  = "hashicorp/helm"
-      version = ">= 2.1.0"
+      version = "~> 3.0"
     }
 
     local = {
       source  = "hashicorp/local"
-      version = ">= 2.1.0"
+      version = "~> 2.0"
     }
 
     null = {
       source  = "hashicorp/null"
-      version = ">= 3.1"
+      version = "~> 3.0"
     }
 
     random = {
       source  = "hashicorp/random"
-      version = ">= 3.1.0"
+      version = "~> 3.0"
     }
 
     template = {
       source  = "hashicorp/template"
-      version = ">= 2.1"
+      version = "~> 2.0"
     }
 
     vault = {
       source  = "hashicorp/vault"
-      version = ">= 2.19.0"
+      version = "~> 5.0"
     }
   }
 }
