@@ -1,15 +1,16 @@
-FROM golang:1.22.4-alpine3.20 AS builder
+FROM golang:1.25.1-alpine3.22 AS builder
 
-ARG TARGETPLATFORM
-ENV TARGETPLATFORM=${TARGETPLATFORM:-linux/amd64}
-ENV TERRAFORM_VERSION=1.5.5
+ARG TERRAFORM_VERSION="1.12.2" 
+ENV TERRAFORM_URL="https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_arm64.zip"
 
-RUN wget -nv -qO terraform.zip "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${TARGETPLATFORM////_}.zip" && \
-  unzip terraform.zip
+RUN wget --quiet ${TERRAFORM_URL} \
+  && unzip terraform_${TERRAFORM_VERSION}_linux_arm64.zip \
+  && mv terraform /usr/local/bin/ \
+  && rm terraform_${TERRAFORM_VERSION}_linux_arm64.zip
 
 COPY examples/services/main/versions.tf .
 
-RUN ./terraform providers mirror /providers
+RUN terraform providers mirror /providers
 
 WORKDIR /terraformer
 
@@ -23,12 +24,12 @@ COPY . .
 RUN go build -o ./out/terraformer src/main.go
 
 
-FROM alpine:3.20 AS app
+FROM alpine:3.22 AS app
 RUN apk add ca-certificates
 
 COPY .terraformrc /root/.terraformrc
 
-COPY --from=builder /go/terraform /usr/local/bin/terraform
+COPY --from=builder /usr/local/bin/terraform /usr/local/bin/terraform
 COPY --from=builder /providers /providers
 COPY --from=builder /terraformer/out/terraformer /usr/local/bin/terraformer
 
