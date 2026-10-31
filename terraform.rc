@@ -1,0 +1,16 @@
+# Terraform CLI configuration baked into the image (TF_CLI_CONFIG_FILE).
+#
+# Providers from registry.terraform.io are served only from the pre-built
+# mirror in /providers (see providers.tf), so runs are fast and reproducible
+# and need no registry access. Providers from other registries are downloaded
+# directly. To allow registry downloads too, point TF_CLI_CONFIG_FILE at your
+# own config.
+provider_installation {
+  filesystem_mirror {
+    path    = "/providers"
+    include = ["registry.terraform.io/*/*"]
+  }
+  direct {
+    exclude = ["registry.terraform.io/*/*"]
+  }
+}

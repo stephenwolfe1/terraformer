@@ -1,11 +1,12 @@
-terraform {
-  backend "local" {
-    path = "/terraform/.terraform.tfstate/services/main/terraform.tfstate"
-  }
+# Populated automatically from ENVIRONMENT (TF_VAR_environment) when set.
+variable "environment" {
+  type    = string
+  default = "local"
 }
 
 module "random" {
-  source = "/terraform/modules/random"
+  source = "../../modules/random"
+  prefix = var.environment
 }
 
 output "random_name" {

@@ -1,0 +1,2 @@
+ignored:
+  - DL3018 # apk package versions churn with every Alpine point release

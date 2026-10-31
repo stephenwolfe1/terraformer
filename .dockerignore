@@ -1,0 +1,12 @@
+.git
+.github
+.vscode
+.idea
+bin
+_dist
+**/.terraform
+**/.terraform-*
+**/*.tfstate
+**/*.tfstate.*
+**/*.tfplan
+**/.terraform.lock.hcl

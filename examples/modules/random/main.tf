@@ -1,5 +1,7 @@
-resource "random_pet" "server" {
+resource "random_pet" "this" {
+  prefix = var.prefix
+
   keepers = {
-    date = var.static ? "string" : "${timestamp()}"
+    date = var.static ? "static" : timestamp()
   }
 }
