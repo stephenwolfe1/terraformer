@@ -1,11 +1,21 @@
-.DS_Store
-.kube
-.helm
-jedi-kube
-_dist/
+# Go
 bin/
+_dist/
 vendor/
-**/.terraform
-**/.terraform.tfstate
-**/.terraform.lock.hcl
-/providers.tf
+*.test
+*.out
+
+# Terraform
+.terraform/
+.terraform-*/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+*.swp

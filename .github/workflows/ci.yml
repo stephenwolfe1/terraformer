@@ -1,0 +1,80 @@
+name: ci
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  IMAGE: docker.io/${{ vars.DOCKER_IMAGE || 'stephenwolfe/terraformer' }}
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: docker/setup-buildx-action@v4
+
+      # Same as `make check`: golangci-lint (lint + format), go test -race,
+      # hadolint and terraform fmt, all inside the Dockerfile's check stage.
+      - uses: docker/build-push-action@v7
+        with:
+          context: .
+          target: check
+          push: false
+          cache-from: type=gha,scope=check
+          cache-to: type=gha,scope=check,mode=max
+
+  image:
+    name: Build image
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # Versions are pinned once, in the Dockerfile
+      - name: Read Terraform version
+        id: versions
+        run: echo "terraform=$(sed -n 's/^ARG TERRAFORM_VERSION="\(.*\)"/\1/p' Dockerfile)" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-qemu-action@v4
+
+      - uses: docker/setup-buildx-action@v4
+
+      - id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.IMAGE }}
+          tags: |
+            type=sha,format=long,prefix=
+            type=ref,event=tag
+            type=raw,value=${{ steps.versions.outputs.terraform }},enable=${{ github.ref == 'refs/heads/develop' }}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/develop' }}
+
+      - name: Login to Docker Hub
+        if: github.event_name == 'push'
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - uses: docker/build-push-action@v7
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: ${{ github.event_name == 'push' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            VERSION=${{ github.ref_type == 'tag' && github.ref_name || github.sha }}
+            GIT_COMMIT=${{ github.sha }}
+            GIT_TREE_STATE=clean

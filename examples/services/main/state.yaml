@@ -1,0 +1,11 @@
+# Service gating: terraformer only runs this service for the
+# account / environment / region combinations enabled here.
+# While this file exists, ACCOUNT, ENVIRONMENT and REGION must be set
+# (or gating disabled with --state-file='').
+example:
+  dev:
+    local:
+      enabled: true
+  prod:
+    local:
+      enabled: false
